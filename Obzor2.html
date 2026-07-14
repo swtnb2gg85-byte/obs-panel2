@@ -2,14 +2,22 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920, initial-scale=1.0">
+  <title>Студия 68 - Обзор матча</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
 
     html, body {
       width: 1920px;
       height: 1080px;
       overflow: hidden;
       background: transparent;
+      margin: 0;
+      padding: 0;
     }
 
     .crop {
@@ -21,10 +29,11 @@
 
     iframe {
       width: 1920px;
-      height: 126px;   /* 1080 + 88 */
+      height: 1126px;   /* 1080 + 46 */
       border: none;
       display: block;
-      margin-top: -46px; /* плашка уходит за верхний край */
+      margin-top: -46px; /* сдвигаем вверх на 46px */
+      background: transparent;
     }
   </style>
 </head>
@@ -34,6 +43,7 @@
       src="https://script.google.com/macros/s/AKfycbwzByMTFtj4HmIGSJmCw_Ht7XzcSXRdnXsYoL4HNET6f4L8lzwZEvDA_G-TovzEk1CF/exec"
       scrolling="no"
       allowtransparency="true"
+      frameborder="0"
     ></iframe>
   </div>
 </body>
