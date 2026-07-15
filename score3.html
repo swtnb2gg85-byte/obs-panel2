@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .crop {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    iframe {
+      width: 1920px;
+      /* iframe выше на 88px чтобы вместить плашку + 1080px контента */
+      height: 1168px;
+      border: none;
+      display: block;
+      /* Сдвигаем вверх на 88px — плашка уходит за край .crop */
+      margin-top: -88px;
+    }
+  </style>
+</head>
+<body>
+  <div class="crop">
+    <!-- Замени src на URL твоего табло из Apps Script -->
+    <iframe
+      src="https://script.google.com/macros/s/AKfycbzZOjueggt3w3ea392Q9QdBdincJKQ2tUkjM0tqQPuWc4igZVzZvN-NEi81gyG8BGFZ/exec"
+      scrolling="no"
+      allowtransparency="true"
+    ></iframe>
+  </div>
+</body>
+</html>
