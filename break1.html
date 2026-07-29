@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920, initial-scale=1.0">
+  <title>Студия 68 - Обзор матча</title>
+  <style>
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+
+    html, body {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: transparent;
+      margin: 0;
+      padding: 0;
+    }
+
+    .crop {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    iframe {
+      width: 1920px;
+      height: 1126px;   /* 1080 + 46 (оставляем для скрытия баннера) */
+      border: none;
+      display: block;
+      margin-top: 55px;  /* 101 - 46 = 55px (сдвигаем вниз, чтобы компенсировать поднятие) */
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+  <div class="crop">
+    <iframe
+      src="https://script.google.com/macros/s/AKfycbyT5Rj5b14MiYEJtxZFE_W2bDtug13c4dHPbslnIJio2TYTNFqeMcH5H5zH7zh7O1wNrA/exec"
+      scrolling="no"
+      allowtransparency="true"
+      frameborder="0"
+    ></iframe>
+  </div>
+</body>
+</html>
