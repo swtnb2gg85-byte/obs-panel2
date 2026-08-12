@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<title>VK OAuth redirect</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VK OAuth Redirect</title>
 </head>
 <body>
-<p>Авторизация VK завершена. Скопируйте полный адрес этой страницы из адресной строки браузера и вставьте его в окно авторизации приложения.</p>
+    <h2>Авторизация VK ID</h2>
+    <p>Скопируйте URL этой страницы и вставьте в приложение.</p>
+    <script>
+        // Страница-заглушка для получения параметров от VK ID
+        console.log('Redirect received:', window.location.href);
+    </script>
 </body>
 </html>
