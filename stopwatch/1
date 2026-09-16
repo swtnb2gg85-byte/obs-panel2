@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Секундомер тренера</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: #0b0d17;   /* тёмный фон под цвет приложения */
+  }
+
+  /* Обёртка сдвинута вверх на высоту баннера AppScript (56px).
+     Высота увеличена на ту же величину, чтобы нижняя часть
+     приложения не обрезалась. */
+  .app-frame {
+    position: absolute;
+    top: -56px;
+    left: 0;
+    width: 100%;
+    height: calc(100% + 56px);
+    border: 0;
+    display: block;
+  }
+</style>
+</head>
+<body>
+  <iframe
+    class="app-frame"
+    src="https://script.google.com/macros/s/AKfycbxq-Hq8u7TaWpQrpmljIeQl12cyFyHuFJzF6iyUFRyBwLCaexzAEF_UVEun-3w87T8p/exec"
+    allow="clipboard-write; clipboard-read"
+    referrerpolicy="no-referrer"
+    allowfullscreen
+  ></iframe>
+</body>
+</html>
