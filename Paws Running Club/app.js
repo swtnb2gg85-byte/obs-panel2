@@ -101,17 +101,15 @@ function shell(){
     <button data-go="rating">Рейтинг</button>
     <button data-go="feed">Результаты</button>
     <button data-go="stats">Цифры</button>
+    <button data-go="gallery" id="navGal" hidden>Кадры</button>
     <button data-go="athletes">Спортсмены</button>
   </nav>
-  <button class="tgl" id="theme" aria-label="Сменить тему">
-    <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-    <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-  </button>
 </div></header>
 
 <main>
 <div class="hero" id="hero">
   <div class="hero-bg" id="heroBg"><img id="heroImg" alt=""></div>
+  <div class="hero-light" aria-hidden="true"></div>
   <div class="wrap hero-in">
     <div class="stamp"><i></i><span id="stamp"></span></div>
     <h1><span>Paws</span><span class="o">Running</span><span class="a">Club</span></h1>
@@ -169,9 +167,14 @@ function shell(){
   <div class="grid3 rv" id="statsGrid"></div>
 </div></section>
 
+<section id="gallery" hidden><div class="wrap">
+  <div class="sh rv"><div><div class="eyebrow">05 — Кадры</div><h2>Клуб <s>в кадре</s></h2></div></div>
+  <div class="gal" id="galGrid"></div>
+</div></section>
+
 <section id="athletes"><div class="wrap">
   <div class="sh rv">
-    <div><div class="eyebrow">05 — Лапки</div><h2>Спортсмены</h2></div>
+    <div><div class="eyebrow">06 — Лапки</div><h2>Спортсмены</h2></div>
     <label class="srch">${ICON.search}<input id="q" type="search" placeholder="Найти по фамилии или имени" autocomplete="off"></label>
   </div>
   <div class="ath" id="athGrid"></div>
@@ -184,7 +187,15 @@ function shell(){
   <div class="big-t" aria-hidden="true">Paws Running Club</div>
 </div></footer>
 
-<dialog id="dlg" aria-label="Спортсмен"></dialog>`;
+<dialog id="dlg" aria-label="Спортсмен"></dialog>
+<dialog id="lb" class="lb" aria-label="Фото">
+  <button class="x" data-lbx aria-label="Закрыть"><svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
+  <button class="nv p" data-lbn="-1" aria-label="Назад"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <button class="nv n" data-lbn="1" aria-label="Вперёд"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+  <img id="lbImg" alt="">
+</dialog>
+<div class="fx-glow" aria-hidden="true"></div><div class="fx-ring" aria-hidden="true"></div><div class="fx-dot" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div><div class="grain" aria-hidden="true"></div>`;
 }
 
 /* ───────────── картинки ───────────── */
@@ -271,7 +282,7 @@ function renderRecords(){
          <div style="text-align:right"><div class="num">${fmtTime(x.sec)}</div><div class="pace">${fmtPace(x.pace)}</div></div></div>`
     : `<div class="rr none ${g === 'М' ? 'm' : 'f'}"><div class="tag">${g === 'М' ? 'Мужчины' : 'Женщины'}</div><div class="who muted">Рекорда пока нет</div><div class="num">—</div></div>`;
   $('#recGrid').innerHTML = rs.length ? rs.map(r => `
-    <button class="rc rv" data-dist="${esc(r.dist)}" aria-label="ТОП-10 · ${esc(r.dist)}">
+    <button class="rc rv tilt spot" data-dist="${esc(r.dist)}" aria-label="ТОП-10 · ${esc(r.dist)}">
       <div class="rc-h"><b>${esc(r.dist)}</b><span>ТОП-10 →</span></div>
       ${row(r.m, 'М')}${row(r.f, 'Ж')}
     </button>`).join('') : '<div class="empty">Пока нет результатов</div>';
@@ -313,7 +324,7 @@ function renderBoard(){
 function renderFeed(){
   const list = ALL.filter(r => r.ts).sort((a, b) => b.ts - a.ts).slice(0, 8);
   $('#feedGrid').innerHTML = list.map(r => `
-    <button class="fc rv" data-a="${esc(nameOf(r))}">
+    <button class="fc rv tilt spot" data-a="${esc(nameOf(r))}">
       <div class="fc-h"><span class="av ${r.g === 'М' ? 'm' : 'f'}">${esc(initials(r))}</span>
         <div><b>${esc(nameOf(r))}${r.pb ? '<span class="pb">PB</span>' : ''}</b><small>${ago(r.ts)}${r.season ? ' · сезон ' + r.season : ''}</small></div></div>
       <div class="num">${fmtTime(r.sec)}</div>
@@ -345,9 +356,9 @@ function renderStats(){
   const pct = (a, b) => (a + b) ? (a / (a + b) * 100).toFixed(1) : 0;
 
   $('#statsGrid').innerHTML = `
-    <div class="pn"><h3>Результатов по сезонам</h3><div class="cols">${cols}</div></div>
-    <div class="pn"><h3>Популярные дистанции</h3>${hb}</div>
-    <div class="pn"><h3>Состав клуба</h3>
+    <div class="pn spot"><h3>Результатов по сезонам</h3><div class="cols">${cols}</div></div>
+    <div class="pn spot"><h3>Популярные дистанции</h3>${hb}</div>
+    <div class="pn spot"><h3>Состав клуба</h3>
       <div class="split"><div class="sp-t"><span style="color:var(--m)">Мужчины · ${m}</span><span style="color:var(--f)">Женщины · ${f}</span></div>
         <div class="sp-b"><i style="flex:${m||0.001};background:var(--m)"></i><i style="flex:${f||0.001};background:var(--f)"></i></div></div>
       <div class="split"><div class="sp-t"><span>Ученики · ${stu}</span><span class="muted">Тренеры · ${tr}</span></div>
@@ -368,7 +379,7 @@ function renderAthletes(filter){
   const list = Object.values(map).filter(a => !q || (a.ln + ' ' + a.fn).toLowerCase().includes(q))
     .sort((a, b) => (a.ln + a.fn).localeCompare(b.ln + b.fn, 'ru'));
   $('#athGrid').innerHTML = list.map(a => `
-    <button class="ac" data-a="${esc(a.ln + ' ' + a.fn)}"><span class="av ${a.g === 'М' ? 'm' : 'f'}">${esc(initials(a))}</span>
+    <button class="ac spot" data-a="${esc(a.ln + ' ' + a.fn)}"><span class="av ${a.g === 'М' ? 'm' : 'f'}">${esc(initials(a))}</span>
       <span style="min-width:0"><b>${esc(a.ln + ' ' + a.fn)}</b><small>${a.n} ${plural(a.n, 'результат', 'результата', 'результатов')}</small></span></button>`).join('')
     || '<div class="empty" style="grid-column:1/-1">Никого не нашли</div>';
 }
@@ -426,33 +437,139 @@ function countUp(el){
   })(t0);
 }
 
-/* ───────────── навигация / тема ───────────── */
+/* ───────────── навигация ───────────── */
 function go(id){
   const el = document.getElementById(id);
   if (!el) return;
   const y = id === 'hero' ? 0 : el.getBoundingClientRect().top + window.scrollY - 56;
   window.scrollTo({ top:y, behavior:matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth' });
 }
-function setTheme(t){
-  document.documentElement.setAttribute('data-theme', t);
-  const mt = document.querySelector('meta[name="theme-color"]');
-  if (mt) mt.content = t === 'light' ? '#f3f0e9' : '#0a0a0b';
+/* ───────────── галерея (TG_media B3–B5) ───────────── */
+let GAL = [];
+function renderGallery(){
+  const m = (D.media && D.media.gallery) || [];
+  GAL = m.map((ref, i) => ({ ref, i })).filter(x => x.ref);
+  if (!GAL.length) return;
+  $('#gallery').hidden = false; $('#navGal').hidden = false;
+  const box = $('#galGrid');
+  box.className = 'gal n' + GAL.length;
+  box.innerHTML = GAL.map((x, k) => `
+    <figure class="shot tilt spot rv" data-i="${k}" tabindex="0" role="button" aria-label="Открыть фото ${k + 1}">
+      <div class="shot-i"><img alt=""></div><i class="glare"></i>
+      <span class="zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.2-4.2M11 8v6M8 11h6"/></svg></span>
+    </figure>`).join('');
+  $$('#galGrid img').forEach((img, k) => loadImage(img, GAL[k].ref, 1600, null, 'g' + GAL[k].i));
+  box.addEventListener('keydown', e => {
+    const s = e.target.closest && e.target.closest('.shot');
+    if (s && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); openShot(+s.dataset.i); }
+  });
 }
-function initTheme(){
-  let t = store.get('paws-theme');
-  if (!t) t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-  setTheme(t);
+let shotI = 0;
+function openShot(i){
+  const imgs = $$('#galGrid img');
+  if (!imgs[i] || !imgs[i].src) return;
+  shotI = i;
+  $('#lbImg').src = imgs[i].src;
+  $$('#lb .nv').forEach(b => b.hidden = imgs.length < 2);
+  const lb = $('#lb');
+  if (lb.showModal){ if (!lb.open) lb.showModal(); } else lb.setAttribute('open', '');
 }
+function stepShot(d){
+  const imgs = $$('#galGrid img');
+  if (imgs.length) openShot((shotI + d + imgs.length) % imgs.length);
+}
+
+/* ───────────── эффекты: слежение за мышкой ───────────── */
+function initFx(){
+  const root = document.documentElement;
+  if (!matchMedia('(pointer:fine)').matches || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  const glow = $('.fx-glow'), ring = $('.fx-ring'), dot = $('.fx-dot');
+  const hero = $('#hero'), bg = $('#heroBg'), spans = $$('.hero h1 span'), outline = $('.hero h1 .o');
+  const light = $('.hero-light');
+  const depth = [14, 30, 52];
+  let mx = innerWidth / 2, my = innerHeight / 3, gx = mx, gy = my, rx = mx, ry = my, seen = false;
+  const HOV = 'a,button,.tilt,[data-a],.chip,input,select,.shot';
+  let lastCard = null, lastMag = null;
+  function resetCard(el){ if (!el) return; el.classList.remove('hot'); el.style.removeProperty('--rx'); el.style.removeProperty('--ry'); }
+  function resetMag(el){ if (el) el.style.translate = ''; }
+
+  addEventListener('pointermove', e => {
+    if (e.pointerType && e.pointerType !== 'mouse') return;
+    mx = e.clientX; my = e.clientY;
+    dot.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0)';
+    if (!seen){ seen = true; root.classList.add('fx-seen'); gx = rx = mx; gy = ry = my; }
+    const t = e.target;
+    ring.classList.toggle('hov', !!(t.closest && t.closest(HOV)));
+
+    const card = t.closest && t.closest('.spot,.tilt');
+    if (lastCard && lastCard !== card) resetCard(lastCard);
+    if (card){
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      card.style.setProperty('--gx', (x * 100).toFixed(1) + '%');
+      card.style.setProperty('--gy', (y * 100).toFixed(1) + '%');
+      card.classList.add('hot');
+      if (card.classList.contains('tilt')){
+        card.style.setProperty('--rx', ((.5 - y) * 9).toFixed(2) + 'deg');
+        card.style.setProperty('--ry', ((x - .5) * 11).toFixed(2) + 'deg');
+      }
+    }
+    lastCard = card;
+
+    const mag = t.closest && t.closest('.btn');
+    if (lastMag && lastMag !== mag) resetMag(lastMag);
+    if (mag){
+      const r = mag.getBoundingClientRect();
+      mag.style.translate = ((e.clientX - (r.left + r.width / 2)) * .22).toFixed(1) + 'px ' + ((e.clientY - (r.top + r.height / 2)) * .32).toFixed(1) + 'px';
+    }
+    lastMag = mag;
+  }, { passive:true });
+  root.addEventListener('mouseleave', () => { root.classList.remove('fx-seen'); seen = false; resetCard(lastCard); resetMag(lastMag); lastCard = lastMag = null; });
+
+  (function loop(){
+    gx += (mx - gx) * .10; gy += (my - gy) * .10;
+    rx += (mx - rx) * .22; ry += (my - ry) * .22;
+    glow.style.transform = 'translate3d(' + gx + 'px,' + gy + 'px,0)';
+    ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
+    const sy = window.scrollY;
+    if (sy < innerHeight * 1.1){
+      const r = hero.getBoundingClientRect();
+      const px = (gx - r.left) / r.width, py = (gy - r.top) / r.height;
+      light.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+      light.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+      bg.style.translate = ((.5 - px) * 34).toFixed(1) + 'px ' + ((.5 - py) * 22 + sy * .22).toFixed(1) + 'px';
+      spans.forEach((s, i) => { s.style.translate = ((px - .5) * depth[i]).toFixed(1) + 'px ' + ((py - .5) * depth[i] * .6).toFixed(1) + 'px'; });
+      if (outline){
+        const o = outline.getBoundingClientRect();
+        outline.style.setProperty('--sx', (gx - o.left).toFixed(0) + 'px');
+        outline.style.setProperty('--sy', (gy - o.top).toFixed(0) + 'px');
+      }
+    }
+    requestAnimationFrame(loop);
+  })();
+}
+
 function spy(){
-  const ids = ['records','rating','feed','stats','athletes'];
+
+  const ids = ['records','rating','feed','stats','gallery','athletes'];
+  const prog = $('#prog');
   const top = $('#top');
   const onScroll = () => {
     top.classList.toggle('stuck', window.scrollY > 40);
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    if (prog) prog.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, window.scrollY / max) : 0) + ')';
     let cur = '';
-    ids.forEach(id => { const r = document.getElementById(id).getBoundingClientRect(); if (r.top < window.innerHeight * .4) cur = id; });
+    ids.forEach(id => { const el = document.getElementById(id); if (!el || el.hidden) return; if (el.getBoundingClientRect().top < window.innerHeight * .4) cur = id; });
+    $$('#galGrid img').forEach(im => {
+      const r = im.parentElement.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > window.innerHeight) return;
+      im.style.translate = '0 ' + (((r.top + r.height / 2) - window.innerHeight / 2) * -.07).toFixed(1) + 'px';
+    });
     $$('#nav button').forEach(b => b.classList.toggle('on', b.dataset.go === cur));
   };
-  window.addEventListener('scroll', onScroll, { passive:true });
+  let tk = false;
+  window.addEventListener('scroll', () => { if (!tk){ tk = true; requestAnimationFrame(() => { tk = false; onScroll(); }); } }, { passive:true });
+  window.addEventListener('resize', onScroll);
   onScroll();
 }
 
@@ -463,10 +580,11 @@ function bind(){
     if (t.closest('[data-stop]')) return;           // внешняя ссылка на трек
     const g = t.closest('[data-go]');
     if (g){ e.preventDefault(); go(g.dataset.go); return; }
-    if (t.closest('#theme')){
-      const n = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-      setTheme(n); store.set('paws-theme', n); return;
-    }
+    const sh = t.closest('.shot');
+    if (sh){ openShot(+sh.dataset.i); return; }
+    if (t.closest('[data-lbx]')){ $('#lb').close(); return; }
+    if (t.closest('[data-lbn]')){ stepShot(+t.closest('[data-lbn]').dataset.lbn); return; }
+    if (t === $('#lb')){ $('#lb').close(); return; }
     const sg = t.closest('.seg button');
     if (sg){
       const box = sg.parentElement;
@@ -494,15 +612,14 @@ function bind(){
 }
 
 /* ───────────── старт ───────────── */
-initTheme();
 loadData().then(d => {
   D = d; prepare();
   S.dist = pickDefaultDist();
-  shell(); initTheme();
+  shell();
   renderStamp(); renderTicker(); renderKpi();
   renderRecords(); renderChips(); renderSeason(); renderBoard();
-  renderFeed(); renderStats(); renderAthletes();
-  loadMedia(); bind(); spy();
+  renderFeed(); renderStats(); renderAthletes(); renderGallery();
+  loadMedia(); bind(); spy(); initFx();
   observe($$('.rv').filter(el => !el.closest('#recGrid') && !el.closest('#feedGrid')));
   window.__ready = true;
 }).catch(err => {
